@@ -6,7 +6,6 @@ SOURCE_FILE="main.c deepMem.c";
 HEADERS_PATH="../include";
 FLAGS="-g -Wall -I${HEADERS_PATH} -o ${NAMEAPP}";
 
-
 [[ -n $(ls "${SOURCE_FOLDER}" 2> /dev/null) ]] && {
   printf "Build...\n";
   
@@ -21,7 +20,7 @@ FLAGS="-g -Wall -I${HEADERS_PATH} -o ${NAMEAPP}";
   BUILD="gcc${FULL_SOURCE_PATH} ${FLAGS}"
   printf "\033[34m%s\033[0m\n" "${BUILD}";
   
-  echo "${BUILD}" | bash;
+  eval "${BUILD}";
 
   printf "\033[32;40mThe assembly is ready. Your file \"${NAMEAPP}\".\033[0m\n";
 } || {
