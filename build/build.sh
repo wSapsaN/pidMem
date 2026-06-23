@@ -3,7 +3,8 @@
 NAMEAPP="app";
 SOURCE_FOLDER="../source";
 SOURCE_FILE="main.c deepMem.c";
-FLAGS="-g -Wall -o ${NAMEAPP}";
+HEADERS_PATH="../include";
+FLAGS="-g -Wall -I${HEADERS_PATH} -o ${NAMEAPP}";
 
 
 [[ -n $(ls "${SOURCE_FOLDER}" 2> /dev/null) ]] && {
