@@ -15,7 +15,7 @@ int vmrss(const char *line)
   unsigned int indexTMP = 0; // Index counter for temporary character arrays.
   
   // read the line.
-  while (((line[i]) != '\0') || (i <= (LINE_SIZE/2)))
+  while (line[i] != '\0')
   {
     if (line[0] != 'V') return 0;
     
@@ -36,10 +36,11 @@ int vmrss(const char *line)
     // copy value on line.
     tmp[indexTMP] = line[i];
     indexTMP++;
+    tmp[indexTMP] = '\0';
 
     if (strcmp(tmp, "VmRSS") == 0) 
     {
-      flagW = 1; // if line == name. Then flag = setp 2.
+      flagW = 1;
       indexTMP = 0;
       i++; // here is the repeat increment for index i to jump over ":".
     }
@@ -72,7 +73,7 @@ void deep(struct PIDdata* data, char* path)
   FILE* fp = fopen(path, "r");
   if (fp)
   {
-    while ((fgets(buffer, 256, fp)) != NULL)
+    while ((fgets(buffer, sizeof(buffer), fp)) != NULL)
     {
       if (!flagName)
       {
@@ -89,10 +90,11 @@ void deep(struct PIDdata* data, char* path)
       if (mem > data->memory)
       {
         data->memory = mem;
-        strcpy(data->serviceName, tmpName);
+        strncpy(data->serviceName, tmpName, sizeof(data->serviceName));
       }
     }
+    
+    fclose(fp);
   }
 
-  fclose(fp);
 }

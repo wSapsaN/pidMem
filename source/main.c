@@ -15,7 +15,7 @@ int is_numeric(const char* str)
 
   for (int i = 0; str[i] != '\0'; i++)
   {
-    if (!isdigit(str[i])) return 0; // If the symbol is not a number, then 1 is returned.
+    if (!isdigit(str[i])) return 0; // If the symbol is not a number, then 0 is returned.
   }
 
   return 1;
@@ -58,7 +58,7 @@ int main(void)
   
   // the structure that will contain the winner of the memory eating contest
   struct PIDdata data = {
-    .serviceName = "None\0", 
+    .serviceName = "None",
     .memory      = 0
   };
 
