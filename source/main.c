@@ -2,8 +2,12 @@
 #include <dirent.h>
 #include <ctype.h>
 #include <string.h>
+#include <stdlib.h>
+
+#include "deepMem.h"
 
 #define RPATH "/proc"
+
 
 int is_numeric(const char* str)
 {
@@ -17,6 +21,21 @@ int is_numeric(const char* str)
   return 1;
 }
 
+char* getPath(const char *pid)
+{
+  char *status = "status";
+  unsigned int totalsize = strlen(pid) + strlen(RPATH) + strlen(status) + 3;
+  char* path = malloc(totalsize);
+  if (path == NULL)
+  {
+    perror("Bad memory\n");
+  }
+
+  snprintf(path, totalsize, "%s/%s/%s", RPATH, pid, status);
+
+  return path;
+
+}
 
 int main(void)
 {
@@ -29,11 +48,26 @@ int main(void)
     perror("Failed open /proc");
     return -1;
   }
+  
+  struct PIDdata data = {
+    .serviceName = "None\0", 
+    .memory      = 0
+  };
 
+  char* path;
   while ((entry = readdir(dir)) != NULL) // read catalog.
   {
-    if (is_numeric(entry->d_name)) printf("%s\n", entry->d_name); // check simbol on numeric.
+    if (is_numeric(entry->d_name)) { // check simbol on numeric.
+      
+      path = getPath(entry->d_name);
+
+      deep(&data, path);
+
+      free(path);
+    }
   }
+
+  printf("%sVmRSS:\t%d\n", data.serviceName, data.memory);
 
   closedir(dir);
 
