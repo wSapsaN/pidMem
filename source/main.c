@@ -23,14 +23,21 @@ int is_numeric(const char* str)
 
 char* getPath(const char *pid)
 {
+  /* 
+    A function that returns the path to the process status file containing the necessary data for analysis.
+    This function may not be as efficient as it uses the heap in a loop.
+  */
+
   char *status = "status";
   unsigned int totalsize = strlen(pid) + strlen(RPATH) + strlen(status) + 3;
   char* path = malloc(totalsize);
   if (path == NULL)
   {
     perror("Bad memory\n");
+    exit(-1); // Fatal Error
   }
 
+  // we combine words into a path
   snprintf(path, totalsize, "%s/%s/%s", RPATH, pid, status);
 
   return path;
@@ -42,13 +49,14 @@ int main(void)
   DIR *dir;
   struct dirent *entry;
 
-  dir = opendir(RPATH);
+  dir = opendir(RPATH); // Browsing the catalog.
   if (dir == NULL) // If file cannot opened, then error is returned.
   {
     perror("Failed open /proc");
     return -1;
   }
   
+  // the structure that will contain the winner of the memory eating contest
   struct PIDdata data = {
     .serviceName = "None\0", 
     .memory      = 0
@@ -61,12 +69,14 @@ int main(void)
       
       path = getPath(entry->d_name);
 
+      // we pass the structure object to the deep analysis function
       deep(&data, path);
 
       free(path);
     }
   }
 
+  // Output result.
   printf("%sVmRSS:\t%d\n", data.serviceName, data.memory);
 
   closedir(dir);

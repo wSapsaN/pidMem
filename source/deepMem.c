@@ -2,13 +2,19 @@
 
 int vmrss(const char *line)
 {
-  char sizemem[LINE_SIZE] = {0};
-  char tmp[LINE_SIZE / 2] = {0};
+  /*
+    Function to search for a string and return the memory
+    consumption as an integer value in decimal notation.
+  */
 
-  unsigned int i        = 0;
-  unsigned int flagW    = 0;
-  unsigned int indexTMP = 0;
+  char sizemem[LINE_SIZE] = {0}; // contains the symbolic number of occupied memory from the file.
+  char tmp[LINE_SIZE / 2] = {0}; // contains the characters of the search string for comparison.
+
+  unsigned int i        = 0; // Index for line.
+  unsigned int flagW    = 0; // A flag after which tells when to collect numerical data.
+  unsigned int indexTMP = 0; // Index counter for temporary character arrays.
   
+  // read the line.
   while (((line[i]) != '\0') || (i <= (LINE_SIZE/2)))
   {
     if (line[0] != 'V') return 0;
@@ -27,20 +33,22 @@ int vmrss(const char *line)
       continue;
     }
 
-    // copy name
+    // copy value on line.
     tmp[indexTMP] = line[i];
     indexTMP++;
 
     if (strcmp(tmp, "VmRSS") == 0) 
     {
-      flagW = 1; // if line == name. Then flag = setp 2
+      flagW = 1; // if line == name. Then flag = setp 2.
       indexTMP = 0;
-      i++;
+      i++; // here is the repeat increment for index i to jump over ":".
     }
 
     i++;
   }
 
+  // Here we convert the memory consumption value 
+  // which was a character data type into an integer type.
   char *endptr;
   errno = 0;
 
@@ -51,9 +59,15 @@ int vmrss(const char *line)
 
 void deep(struct PIDdata* data, char* path)
 {
-  char tmpName[LINE_SIZE] = {0};
-  char buffer[LINE_SIZE];
-  unsigned int flagName = 0;
+  /*
+    The function's task is to parse the process status data 
+    and fill it into the structure.
+  */
+
+  char tmpName[LINE_SIZE] = {0}; // Name proccess.
+  char buffer[LINE_SIZE];        // Buffer for read files.
+  unsigned int flagName = 0;     // The flag is needed to read and write the first line to the tmpName variable.
+  // This is necessary to avoid re-reading the file each time.
 
   FILE* fp = fopen(path, "r");
   if (fp)
@@ -68,6 +82,9 @@ void deep(struct PIDdata* data, char* path)
         continue;
       }
       
+      // We get the value the application consumed from memory.
+      // If the value is greater than the previous one, the data in
+      // the structure is overwritten with more current data.
       int mem = vmrss(buffer);
       if (mem > data->memory)
       {
