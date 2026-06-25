@@ -77,7 +77,7 @@ int main(void)
   }
 
   // Output result.
-  printf("%sVmRSS:\t%d\n", data.serviceName, data.memory);
+  printf("%sVmRSS:\t%d kB\n", data.serviceName, data.memory);
 
   closedir(dir);
 
